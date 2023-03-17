@@ -3,14 +3,10 @@ import { useEffect, useRef, useState } from "react";
 const SimpleInput = (props) => {
 	const nameInputRef = useRef();
 	const [enteredName, setEnteredName] = useState("");
-	const [enteredNameIsValid, setEnteredNameIsValid] = useState(false);
 	const [enteredNameTouched, setEnteredNameTouched] = useState(false);
 
-	useEffect(() => {
-		if (enteredNameIsValid) {
-			console.log("Name Input is valid!");
-		}
-	}, [enteredNameIsValid]);
+	const enteredNameIsValid = enteredName.trim() !== "";
+	const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
 
 	const nameInputChangeHandler = (event) => {
 		setEnteredName(event.target.value);
@@ -18,11 +14,6 @@ const SimpleInput = (props) => {
 
 	const nameInputBlurHandler = (event) => {
 		setEnteredNameTouched(true);
-
-		if (enteredName.trim() === "") {
-			setEnteredNameIsValid(false);
-			return;
-		}
 	};
 
 	const formSubmissionHandler = (event) => {
@@ -30,24 +21,22 @@ const SimpleInput = (props) => {
 
 		setEnteredNameTouched(true);
 
-		if (enteredName.trim() === "") {
-			setEnteredNameIsValid(false);
+		if (!enteredNameIsValid) {
 			return;
 		}
-		setEnteredNameIsValid(true);
 
 		console.log("useState:", enteredName);
+
 		const enteredValue = nameInputRef.current.value;
 		console.log("useRef:", enteredValue);
 
 		setEnteredName("");
+		setEnteredNameTouched(false);
 	};
 
-	// use only one of these two
+	// use only one - useState or useRefs
 	// if you check only once when form is submitted then useRefs is better
 	// if you check every key stroke, end want to reset input value, then useRefs is better
-
-	const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
 
 	const nameInputClasses = nameInputIsInvalid
 		? "form-control invalid"
