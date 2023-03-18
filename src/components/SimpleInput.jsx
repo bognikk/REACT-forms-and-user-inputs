@@ -3,6 +3,10 @@ import { useRef } from "react";
 import useInput from "../hooks/use-input";
 
 const SimpleInput = (props) => {
+	//-----------USE REFS--------------------
+	const nameInputRef = useRef();
+	//-----------------------------------
+
 	const {
 		value: enteredName,
 		isValid: enteredNameIsValid,
@@ -21,8 +25,6 @@ const SimpleInput = (props) => {
 		reset: resetEmailInput,
 	} = useInput((value) => value.includes("@"));
 
-	const nameInputRef = useRef();
-
 	let formIsValid = false;
 
 	if (enteredNameIsValid && enteredEmailIsValid) {
@@ -38,8 +40,10 @@ const SimpleInput = (props) => {
 
 		console.log("useState:", enteredName);
 
+		//-----------USE REFS--------------------
 		const enteredValue = nameInputRef.current.value;
 		console.log("useRef:", enteredValue);
+		//-----------------------------------
 
 		resetNameInput();
 		resetEmailInput();
