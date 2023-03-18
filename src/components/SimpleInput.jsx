@@ -1,18 +1,22 @@
 import { useRef, useState } from "react";
 
+import useInput from "../hooks/use-input";
+
 const SimpleInput = (props) => {
+	const {
+		value: enteredName,
+		isValid: enteredNameIsValid,
+		hasError: nameInputHasError,
+		valueChangeHandler: nameChangeHandler,
+		inputBlurHandler: nameBlurHandler,
+		reset: resetNameInput,
+	} = useInput((value) => value.trim() !== "");
+
 	const nameInputRef = useRef();
-	//name
-	const [enteredName, setEnteredName] = useState("");
-	const [enteredNameTouched, setEnteredNameTouched] = useState(false);
 
 	//email
 	const [enteredEmail, setEnteredEmail] = useState("");
 	const [enteredEmailTouched, setEnteredEmailTouched] = useState(false);
-
-	//check name
-	const enteredNameIsValid = enteredName.trim() !== "";
-	const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
 
 	//check email
 	const enteredEmailIsValid = enteredEmail.includes("@");
@@ -24,16 +28,8 @@ const SimpleInput = (props) => {
 		formIsValid = true;
 	}
 
-	const nameInputChangeHandler = (event) => {
-		setEnteredName(event.target.value);
-	};
-
 	const emailInputChangeHandler = (event) => {
 		setEnteredEmail(event.target.value);
-	};
-
-	const nameInputBlurHandler = (event) => {
-		setEnteredNameTouched(true);
 	};
 
 	const emailInputBlurHandler = (event) => {
@@ -43,7 +39,6 @@ const SimpleInput = (props) => {
 	const formSubmissionHandler = (event) => {
 		event.preventDefault();
 
-		setEnteredNameTouched(true);
 		setEnteredEmailTouched(true);
 
 		if (!enteredNameIsValid && !enteredEmailIsValid) {
@@ -55,8 +50,7 @@ const SimpleInput = (props) => {
 		const enteredValue = nameInputRef.current.value;
 		console.log("useRef:", enteredValue);
 
-		setEnteredName("");
-		setEnteredNameTouched(false);
+		resetNameInput();
 
 		setEnteredEmail("");
 		setEnteredEmailTouched(false);
@@ -66,7 +60,7 @@ const SimpleInput = (props) => {
 	// if you check only once when form is submitted then useRefs is better
 	// if you check every key stroke, end want to reset input value, then useRefs is better
 
-	const nameInputClasses = nameInputIsInvalid
+	const nameInputClasses = nameInputHasError
 		? "form-control invalid"
 		: "form-control";
 
@@ -82,11 +76,11 @@ const SimpleInput = (props) => {
 					ref={nameInputRef}
 					type="text"
 					id="name"
-					onChange={nameInputChangeHandler}
-					onBlur={nameInputBlurHandler}
+					onChange={nameChangeHandler}
+					onBlur={nameBlurHandler}
 					value={enteredName}
 				/>
-				{nameInputIsInvalid && (
+				{nameInputHasError && (
 					<p className="error-text">Name must not be empty.</p>
 				)}
 			</div>
